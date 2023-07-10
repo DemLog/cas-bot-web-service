@@ -1,0 +1,90 @@
+{
+  "product": [
+    {
+      "key_words": ["университет", "вуз", "институт", "образование"],
+      "data": [
+        {
+          "id": "chelyabinskiy_gosudarstvenniy_universitet_russia_chelyabinsk",
+          "title": "Челябинский государственный университет (Россия, Челябинск)",
+          "categories": ["Россия, Челябинская область", "Вузы", "Образование", "В городе"],
+          "url": "https://otzovik.com/reviews/chelyabinskiy_gosudarstvenniy_universitet_russia_chelyabinsk/",
+          "photo_url": "https://i.otzovik.com/objects/b/110000/107703.png",
+          "disabled": false
+        },
+        {
+          "id": "rossiyskiy_noviy_universitet_russia_moscow",
+          "title": "Российский Новый Университет (Россия, Москва)",
+          "categories": ["Россия, Москва", "Вузы", "Образование", "В городе"],
+          "url": "https://otzovik.com/reviews/rossiyskiy_noviy_universitet_russia_moscow/",
+          "photo_url": "https://i.otzovik.com/objects/b/140000/130112.png",
+          "disabled": true
+        },
+        {
+          "id": "universitet_rossiyskoy_akademii_obrazovaniya_russia_moscow",
+          "title": "Университет Российской Академии Образования (Россия, Москва)",
+          "categories": ["Россия, Москва", "Вузы", "Образование", "В городе"],
+          "url": "https://otzovik.com/reviews/universitet_rossiyskoy_akademii_obrazovaniya_russia_moscow/",
+          "photo_url": "https://i.otzovik.com/objects/b/220000/217866.png",
+          "disabled": true
+        },
+        {
+          "id": "rossiyskiy_noviy_universitet_russia_moscow",
+          "title": "Международный университет в Москве (Россия, Москва)",
+          "categories": ["Вузы", "Образование", "В городе"],
+          "url": "https://otzovik.com/reviews/mezhdunarodniy_universitet_v_moskve_russia_moscow/",
+          "photo_url": "https://i.otzovik.com/objects/b/1110000/1104765.png",
+          "disabled": true
+        },
+        {
+          "id": "gosudarstvenniy_universitet_upravleniya_russia_moscow",
+          "title": "Государственный университет управления (Россия, Москва)",
+          "categories": ["Вузы", "Образование", "В городе"],
+          "url": "https://otzovik.com/reviews/gosudarstvenniy_universitet_upravleniya_russia_moscow/",
+          "photo_url": "https://i.otzovik.com/objects/b/330000/322804.png",
+          "disabled": true
+        },
+        {
+          "id": "rossiyskiy_noviy_universitet_russia_moscow",
+          "title": "Мурманский Государственный Гуманитарный Университет (Россия, Мурманск)",
+          "categories": ["Россия", "Вузы", "Образование", "В городе"],
+          "url": "https://otzovik.com/reviews/murmanskiy_gosudarstvenniy_gumanitarniy_universitet_rossiya_murmansk/",
+          "photo_url": "https://i.otzovik.com/objects/b/10000/6999.png",
+          "disabled": true
+        },
+        {
+          "id": "moskovskiy_gosudarstvenniy_universitet_ekonomiki_staistiki_i_informatiki_mesi",
+          "title": "Московский государственный университет экономики, статистики и информатики (МЭСИ) (Россия, Москва)",
+          "categories": ["Россия, Москва", "Вузы", "Образование", "В городе"],
+          "url": "https://otzovik.com/reviews/moskovskiy_gosudarstvenniy_universitet_ekonomiki_staistiki_i_informatiki_mesi/",
+          "photo_url": "https://otzovik.com/reviews/moskovskiy_gosudarstvenniy_universitet_ekonomiki_staistiki_i_informatiki_mesi/",
+          "disabled": true
+        },
+        {
+          "id": "sankt-peterburgskiy_gosudarstvenniy_universitet_russia_s_-peterburg",
+          "title": "Санкт-Петербургский государственный университет (Россия, С.-Петербург)",
+          "categories": ["Россия, Санкт-Петербург", "Вузы", "Образование", "В городе"],
+          "url": "https://otzovik.com/reviews/sankt-peterburgskiy_gosudarstvenniy_universitet_russia_s_-peterburg/",
+          "photo_url": "https://i.otzovik.com/objects/b/40000/32219.png",
+          "disabled": true
+        },
+        {
+          "id": "rossiyskiy_noviy_universitet_russia_moscow",
+          "title": "Московский Государственный Университет печати им. И.Федорова (Россия,Москва)",
+          "categories": ["Россия, Москва", "Вузы", "Образование", "В городе"],
+          "url": "https://otzovik.com/reviews/murmanskiy_gosudarstvenniy_gumanitarniy_universitet_rossiya_murmansk/",
+          "photo_url": "https://i.otzovik.com/objects/b/40000/36686.png",
+          "disabled": true
+        },
+        {
+          "id": "tomskiy_gosudarstvenniy_pedagogicheskiy_universitet_russia_tomsk",
+          "title": "Томский Государственный Педагогический Университет (Россия, Томск)",
+          "categories": ["Россия, Томская область", "Вузы", "Образование", "В городе"],
+          "url": "https://otzovik.com/reviews/tomskiy_gosudarstvenniy_pedagogicheskiy_universitet_russia_tomsk/",
+          "photo_url": "https://i.otzovik.com/objects/b/50000/43142.png",
+          "disabled": true
+        }
+      ]
+    }
+  ]
+}
+
