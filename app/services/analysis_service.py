@@ -46,7 +46,6 @@ class AnalysisService:
 
         return buffer
 
-
     def get_analysis_interests_reviews(self, data) -> Any:
         pass
 

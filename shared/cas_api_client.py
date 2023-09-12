@@ -76,7 +76,7 @@ class CasApiClient:
     run_visualise_analysis_value_category
     run_visualise_analysis_value_region
     run_visualise_histogram
-    run_visualise_run_quantity_category
+    run_visualise_quantity_category
     """
 
     _x_api_header = "X-API-Key"
@@ -192,12 +192,12 @@ class CasApiClient:
                                          title_object_count=title_object_count,
                                          title_analysis_value=title_analysis_value)
 
-    async def run_visualise_run_quantity_category(self,
-                                                  data: list[CustomersForAllCategoriesBaseAnalysis],
-                                                  *,
-                                                  vis_type: VisualizationType,
-                                                  title: str,
-                                                  title_object_count: str):
+    async def run_visualise_quantity_category(self,
+                                              data: list[CustomersForAllCategoriesBaseAnalysis],
+                                              *,
+                                              vis_type: VisualizationType,
+                                              title: str,
+                                              title_object_count: str):
         return await self._run_visualise(data,
                                          vis_path="quantity/category",
                                          vis_type=vis_type,
