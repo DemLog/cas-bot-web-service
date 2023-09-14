@@ -1,10 +1,13 @@
+from http import HTTPStatus
+
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
 from app import database
 from app.api import api_router
+from app.api.exceptions import CasWebError
 from app.core.config import ProjectSettings
 from app.database import dbconf
 
@@ -38,6 +41,22 @@ def root() -> JSONResponse:
     return JSONResponse(status_code=200,
                         content={
                             "message": "Welcome to Sample Server"})
+
+
+@app.exception_handler(CasWebError)
+async def cas_exception_handler(request: Request, exc: CasWebError):
+    return JSONResponse(
+        status_code=int(exc.http_status_code),
+        content={"message": exc.message}
+    )
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, ex: Exception):
+    status = HTTPStatus.INTERNAL_SERVER_ERROR
+    return JSONResponse(
+        status_code=status.value, content={"message": status.name}
+    )
 
 
 if __name__ == "__main__":
