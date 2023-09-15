@@ -11,6 +11,15 @@ class UserRoleEnum(str, Enum):
     MANAGER = "manager"
     ADMIN = "admin"
 
+    @staticmethod
+    def get_access_level(level):
+        match level:
+            case UserRoleEnum.MANAGER:
+                return 1
+            case UserRoleEnum.ADMIN:
+                return 2
+        return 0
+
 
 class User(Base):
     __tablename__ = "users"

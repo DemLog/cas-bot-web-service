@@ -41,6 +41,7 @@ def get_user(key: str = Security(api_key_header),
              user_id: str = Security(telegram_user_id),
              token: str = Security(api_token),
              db: Session = Depends(get_db)):
+    """Dependency for access verification by api key or telegram data"""
     if key == ProjectSettings.WEB_SERVICE_API_KEY:
         user: User = crud_users.get_user_id(user_id, db)
         if user is not None:
@@ -67,5 +68,13 @@ def get_user(key: str = Security(api_key_header),
                     raise CasWebError(message="User incorrect", http_status_code=status.HTTP_401_UNAUTHORIZED)
         else:
             raise CasWebError(message="The access token is not valued", http_status_code=status.HTTP_401_UNAUTHORIZED)
+    else:
+        raise CasWebError(message="Invalid or missing API Key", http_status_code=status.HTTP_401_UNAUTHORIZED)
+
+
+def get_key(key: str = Security(api_key_header)):
+    """Dependency for checking access by api key only"""
+    if key == ProjectSettings.WEB_SERVICE_API_KEY:
+        return key
     else:
         raise CasWebError(message="Invalid or missing API Key", http_status_code=status.HTTP_401_UNAUTHORIZED)

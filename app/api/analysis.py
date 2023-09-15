@@ -1,10 +1,13 @@
 import httpx
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import JSONResponse, Response
 
+from app.api.auth import manage_role_access
+from app.core.deps import get_user
 from app.core.schemas import response_schemas, ProductSearch, ProductSave
 from app.crud import crud_bookmarks
+from app.database.models.user import User, UserRoleEnum
 from app.services import analysis_service
 
 router = APIRouter()
@@ -13,7 +16,9 @@ url_analysis = "https://4d3a-185-103-110-235.ngrok-free.app/"
 
 
 @router.post("/search", responses=response_schemas.search_products_responses)
-def search_product(search_product: ProductSearch) -> JSONResponse:
+@manage_role_access(UserRoleEnum.USER)
+def search_product(search_product: ProductSearch,
+                   user: User = Depends(get_user)) -> JSONResponse:
     data = analysis_service.get_products_search(product_search=search_product)
     json_compatible_item_data = jsonable_encoder(data)
     return JSONResponse(status_code=200,
@@ -21,7 +26,9 @@ def search_product(search_product: ProductSearch) -> JSONResponse:
 
 
 @router.get("/product")
-def get_product(product_id: str) -> JSONResponse:
+@manage_role_access(UserRoleEnum.USER)
+def get_product(product_id: str,
+                user: User = Depends(get_user)) -> JSONResponse:
     data = analysis_service.get_product_id(product_id)
     if data is None:
         return JSONResponse(status_code=404,
@@ -32,7 +39,10 @@ def get_product(product_id: str) -> JSONResponse:
 
 
 @router.get("/product/save")
-def save_product(user_id: int, product: ProductSave) -> JSONResponse:
+@manage_role_access(UserRoleEnum.USER)
+def save_product(user_id: int,
+                 product: ProductSave,
+                 user: User = Depends(get_user)) -> JSONResponse:
     data = crud_bookmarks.add_bookmark(user_id, product)
     if data is None:
         return JSONResponse(status_code=500, content={"message": "Internal Server Error"})
@@ -52,7 +62,10 @@ async def get_analysis_data(url: str, product_id: str):
 
 
 @router.get("/interests/comments")
-async def get_analysis_interests_comments(product_id: str, is_bot: bool = False) -> JSONResponse:
+@manage_role_access(UserRoleEnum.USER)
+async def get_analysis_interests_comments(product_id: str,
+                                          is_bot: bool = False,
+                                          user: User = Depends(get_user)) -> JSONResponse:
     url = "analysis_interests/comments?product_name_id={product_id}"
     data = await get_analysis_data(url, product_id)
     if data is None:

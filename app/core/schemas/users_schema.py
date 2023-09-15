@@ -11,8 +11,8 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     first_name: str
-    last_name: str
-    username: str
+    last_name: Optional[str] = None
+    username: Optional[str] = None
     is_accept_terms: bool = False
 
 

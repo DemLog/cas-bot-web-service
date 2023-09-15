@@ -14,7 +14,9 @@
     ],
     "AUTH_SECRET": "09d25e094faa794faa7099f6f0f4f7099f6f0f4caa6cf63b88e8d3e7",
     "AUTH_ALGORITHM": "HS256",
-    "AUTH_EXPIRE_MINUTES": 15
+    "AUTH_EXPIRE_MINUTES": 15,
+    "TELEGRAM_DATA_EXPIRE_MINUTES": 5,
+    "BOT_TOKEN": "12345"
   },
   "DATABASE_CONF": {
     "DATABASE": "postgresql",
