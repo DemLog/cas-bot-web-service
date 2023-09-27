@@ -2,6 +2,7 @@ from typing import Optional
 
 from pydantic import UUID4
 
+from shared.schemas.analysis import AnalysisType
 from shared.schemas.base import TunedModel
 
 
@@ -12,6 +13,7 @@ class CasTask(TunedModel):
 
 class CasPipelineComponent(TunedModel):
     analysis_task_id: UUID4
+    analysis_type: AnalysisType
     analysis_title: str
     visualization_image_task_id: Optional[UUID4]
     visualization_image_title: str

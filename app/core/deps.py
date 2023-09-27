@@ -1,19 +1,22 @@
 from datetime import datetime, timedelta
+from typing import Generator
 
 from fastapi import Security, Depends
-from fastapi.security import APIKeyHeader, APIKeyCookie
 from jose import jwt
 from sqlalchemy.orm import Session
 from starlette import status
 
 from app.api.exceptions import CasWebError
+from app.api.security import APIKeyHeader, APIKeyCookie
 from app.core.config import ProjectSettings
+from app.core.config.config import CasApiSettings
 from app.crud import crud_users
 from app.database import SessionLocal
 from app.database.models.user import User
+from shared.cas_api_client import CasApiClient
 
 
-def get_db():
+async def get_db():
     db = None
     try:
         db = SessionLocal()
@@ -37,10 +40,10 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def get_user(key: str = Security(api_key_header),
-             user_id: str = Security(telegram_user_id),
-             token: str = Security(api_token),
-             db: Session = Depends(get_db)):
+async def get_user(key: str = Security(api_key_header),
+                   user_id: str = Security(telegram_user_id),
+                   token: str = Security(api_token),
+                   db: Session = Depends(get_db)):
     """Dependency for access verification by api key or telegram data"""
     if key == ProjectSettings.WEB_SERVICE_API_KEY:
         user: User = crud_users.get_user_id(user_id, db)
@@ -72,9 +75,15 @@ def get_user(key: str = Security(api_key_header),
         raise CasWebError(message="Invalid or missing API Key", http_status_code=status.HTTP_401_UNAUTHORIZED)
 
 
-def get_key(key: str = Security(api_key_header)):
+async def get_key(key: str = Security(api_key_header)):
     """Dependency for checking access by api key only"""
     if key == ProjectSettings.WEB_SERVICE_API_KEY:
         return key
     else:
         raise CasWebError(message="Invalid or missing API Key", http_status_code=status.HTTP_401_UNAUTHORIZED)
+
+
+async def get_cas_api_client() -> Generator:
+    async with CasApiClient(CasApiSettings.get_cas_api_url(),
+                            api_key=CasApiSettings.CAS_API_KEY) as client:
+        yield client

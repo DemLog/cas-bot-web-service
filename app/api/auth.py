@@ -1,4 +1,5 @@
 import hmac
+from asyncio import iscoroutinefunction
 from datetime import datetime, timedelta
 from functools import wraps
 from hashlib import sha256
@@ -90,7 +91,10 @@ def manage_role_access(access_level: UserRoleEnum):
                     raise CasWebError(message="The user does not have sufficient access rights to perform the action",
                                       http_status_code=status.HTTP_403_FORBIDDEN)
                 else:
-                    result = f(*args, **kwargs)
+                    if iscoroutinefunction(f):
+                        result = await f(*args, **kwargs)
+                    else:
+                        result = f(*args, **kwargs)
                     return result
             else:
                 raise CasWebError(message="Failed to define user access level",

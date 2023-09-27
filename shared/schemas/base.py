@@ -8,4 +8,4 @@ class TunedModel(BaseModel):
         return {key: value.type_.__name__ for key, value in cls.__fields__.items()}
 
     class Config:
-        orm_mode = True
+        from_attributes = True

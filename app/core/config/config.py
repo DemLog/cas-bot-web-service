@@ -45,3 +45,8 @@ class CasApiSettings:
     __DATA = get_config()["CAS_API_CONF"]
     SERVER_HOST = __DATA["SERVER_HOST"]
     VERSION_PATH = __DATA["VERSION_PATH"]
+    CAS_API_KEY = __DATA["CAS_API_KEY"]
+
+    @classmethod
+    def get_cas_api_url(cls) -> str:
+        return f"{cls.SERVER_HOST}{cls.VERSION_PATH}"

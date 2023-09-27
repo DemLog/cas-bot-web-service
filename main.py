@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
@@ -44,19 +44,25 @@ def root() -> JSONResponse:
 
 
 @app.exception_handler(CasWebError)
-async def cas_exception_handler(request: Request, exc: CasWebError):
-    return JSONResponse(
-        status_code=int(exc.http_status_code),
-        content={"message": exc.message}
-    )
+async def cas_exception_handler(connection: Request | WebSocket, exc: CasWebError):
+    if isinstance(connection, WebSocket):
+        await connection.close(reason=exc.message)
+    else:
+        return JSONResponse(
+            status_code=int(exc.http_status_code.value),
+            content={"message": exc.message}
+        )
 
 
 @app.exception_handler(Exception)
-async def unhandled_exception_handler(request: Request, ex: Exception):
+async def unhandled_exception_handler(connection: Request | WebSocket, ex: Exception):
     status = HTTPStatus.INTERNAL_SERVER_ERROR
-    return JSONResponse(
-        status_code=status.value, content={"message": status.name}
-    )
+    if isinstance(connection, WebSocket):
+        await connection.close(reason=status.name)
+    else:
+        return JSONResponse(
+            status_code=status.value, content={"message": status.name}
+        )
 
 
 if __name__ == "__main__":

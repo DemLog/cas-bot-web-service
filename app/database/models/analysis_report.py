@@ -1,6 +1,6 @@
 from enum import Enum
 
-from sqlalchemy import Column, Integer, ForeignKey, Enum as SaEnum, func, TIMESTAMP, Boolean, Text, String
+from sqlalchemy import Column, Integer, ForeignKey, Enum as SaEnum, func, TIMESTAMP, Boolean, Text, String, Uuid
 
 from app.database import Base
 
@@ -14,7 +14,7 @@ class AccessType(str, Enum):
 class AnalysisReport(Base):
     __tablename__ = "analysis_report"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Uuid, primary_key=True, index=True)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     access_type = Column(SaEnum(AccessType), nullable=False, default=AccessType.BOT_USERS)
     formation_date = Column(TIMESTAMP, nullable=False, server_default=func.current_timestamp())

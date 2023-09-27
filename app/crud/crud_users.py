@@ -23,24 +23,26 @@ class CRUDUsers:
         except SQLAlchemyError as e:
             return None
 
-    def update_user(self, user_id: int, user: UserUpdate, db: Session) -> Any:
+    def update_user(self,
+                    db_user: User,
+                    *,
+                    update: UserUpdate,
+                    db: Session):
         try:
-            db_user = db.query(User).filter(User.id == user_id).first()
-
-            if user.first_name is not None:
-                db_user.first_name = user.first_name
-            if user.last_name is not None:
-                db_user.last_name = user.last_name
-            if user.username is not None:
-                db_user.username = user.username
-            if user.role is not None:
-                db_user.role = user.role
-            if user.tokens is not None:
-                db_user.tokens = user.tokens
-            if user.is_active is not None:
-                db_user.is_active = user.is_active
-            if user.is_accept_terms is not None:
-                db_user.is_accept_terms = user.is_accept_terms
+            if update.first_name is not None:
+                db_user.first_name = update.first_name
+            if update.last_name is not None:
+                db_user.last_name = update.last_name
+            if update.username is not None:
+                db_user.username = update.username
+            if update.role is not None:
+                db_user.role = update.role
+            if update.tokens is not None:
+                db_user.tokens = update.tokens
+            if update.is_active is not None:
+                db_user.is_active = update.is_active
+            if update.is_accept_terms is not None:
+                db_user.is_accept_terms = update.is_accept_terms
 
             db.commit()
             db.refresh(db_user)
@@ -48,7 +50,24 @@ class CRUDUsers:
         except SQLAlchemyError as e:
             return None
 
-    def delete_user(self, user_id: int, db: Session) -> Any:
+    def update_user_by_id(self, user_id: int, user: UserUpdate, db: Session) -> Any:
+        db_user: User = db.query(User).filter(User.id == user_id).first()
+        return self.update_user(db_user,
+                                update=user,
+                                db=db)
+
+    def delete_user(self,
+                    db_user: User,
+                    *,
+                    db: Session):
+        try:
+            db.delete(db_user)
+            db.commit()
+            return True
+        except SQLAlchemyError as e:
+            return None
+
+    def delete_user_by_id(self, user_id: int, db: Session) -> Any:
         try:
             db.query(User).filter(User.id == user_id).delete()
             db.commit()
@@ -86,7 +105,19 @@ class CRUDUsers:
         except SQLAlchemyError as e:
             return None
 
-    def user_accept_terms(self, user_id: int, db: Session) -> Any:
+    def user_accept_terms(self,
+                          db_user: User,
+                          *,
+                          db: Session):
+        try:
+            db_user.is_accept_terms = True
+            db.commit()
+            db.refresh(db_user)
+            return db_user
+        except SQLAlchemyError as e:
+            return None
+
+    def user_accept_terms_by_id(self, user_id: int, db: Session) -> Any:
         try:
             db_user = db.query(User).filter(User.id == user_id).first()
             db_user.is_accept_terms = True

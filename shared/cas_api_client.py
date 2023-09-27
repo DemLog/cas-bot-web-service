@@ -1,10 +1,12 @@
 from functools import wraps
+from http.client import BAD_GATEWAY
 from typing import Optional
 from uuid import UUID
 
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientError, ClientResponse
 from aiohttp.web_response import Response
 
+from app.api.exceptions import CasWebError
 from shared.schemas.analysis import (
     CustomersForAllCategoriesAnalysis,
     GroupRegionallyAllCustomerAnalysis,
@@ -81,7 +83,11 @@ class CasApiClient:
 
     _x_api_header = "X-API-Key"
 
-    def __init__(self, cas_api_url: str, api_key: str, session: Optional[ClientSession] = None):
+    def __init__(self,
+                 cas_api_url: str,
+                 *,
+                 api_key: str,
+                 session: Optional[ClientSession] = None):
         if session is None:
             session = ClientSession()
 
@@ -89,7 +95,7 @@ class CasApiClient:
         self.cas_api_url = cas_api_url
         self.api_key = api_key
 
-    async def _post(self, path: str, data: str | any):
+    async def _post(self, path: str, data: any):
         return await self.session.post(f"{self.cas_api_url}{path}",
                                        json=data,
                                        headers={self._x_api_header: self.api_key})
@@ -99,10 +105,10 @@ class CasApiClient:
                                       headers={self._x_api_header: self.api_key})
 
     async def get_task_result(self, task_id: UUID | str):
-        response: Response = await self._get(path=f"result?task_id={task_id}")
+        response: ClientResponse = await self._get(path=f"result?task_id={task_id}")
         match response.status:
             case 200:
-                return response.body
+                return await response.content.read()
             case 202:
                 return None
         raise Exception
@@ -116,15 +122,19 @@ class CasApiClient:
         else:
             raise Exception
 
-    @classmethod
-    def _menage_run_task(cls):
+    @staticmethod
+    def _menage_run_task():
         def decorator(f):
             @wraps(f)
             async def wrapped_f(self, *args, **kwargs):
-                response: Response = await f(self, *args, **kwargs)
+                try:
+                    response: ClientResponse = await f(self, *args, **kwargs)
+                except ClientError as ex:
+                    print(ex)
+                    raise CasWebError(message="Error in CAS API", http_status_code=BAD_GATEWAY)
 
                 if response.status == 200:
-                    return CasTask.model_validate_json(response.body.decode(encoding="utf-8"))
+                    return CasTask.model_validate_json(await response.content.read())
                 else:
                     raise Exception
 
@@ -272,3 +282,9 @@ class CasApiClient:
 
     async def close(self):
         await self.session.close()
+
+    async def __aenter__(self) -> "CasApiClient":
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()

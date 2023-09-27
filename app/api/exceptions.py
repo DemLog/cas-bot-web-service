@@ -7,7 +7,7 @@ class CasWebError(Exception):
 
     def __init__(self,
                  message: str,
-                 http_status_code: HTTPStatus = HTTPStatus.BAD_REQUEST,
+                 http_status_code: HTTPStatus = HTTPStatus.INTERNAL_SERVER_ERROR,
                  *args):
         super().__init__(message, http_status_code, *args)
         self.message = message

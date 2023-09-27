@@ -28,10 +28,9 @@ def get_bookmark(bookmark_id: int,
 
 @router.get("/all")
 @manage_role_access(UserRoleEnum.USER)
-def ger_all_bookmarks(user_id: int,
-                      db: Session = Depends(deps.get_db),
+def ger_all_bookmarks(db: Session = Depends(deps.get_db),
                       user: User = Depends(get_user)) -> JSONResponse:
-    data = crud_bookmarks.get_all_bookmarks(user_id, db)
+    data = crud_bookmarks.get_all_bookmarks(user.id, db)
     if data is not None:
         return JSONResponse(status_code=500,
                             content={"message": "Internal Server Error"})

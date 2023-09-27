@@ -69,3 +69,16 @@ class SentimentAnalysisType(StrEnum):
 class SimilarityAnalysisType(StrEnum):
     category = "category"
     reputation = "reputation"
+
+
+class AnalysisType(StrEnum):
+    interest_reviewers = "interest_reviewers"
+    interest_commentators = "interest_commentators"
+    sentiment_category_reviewers = "sentiment_category_reviewers"
+    sentiment_category_commentators = "sentiment_category_commentators"
+    sentiment_region_reviewers = "sentiment_region_reviewers"
+    sentiment_region_commentators = "sentiment_region_commentators"
+    similarity_reputation_reviewers = "similarity_reputation_reviewers"
+    similarity_reputation_commentators = "similarity_reputation_commentators"
+    similarity_category_reviewers = "similarity_reputation_reviewers"
+    similarity_category_commentators = "similarity_reputation_commentators"

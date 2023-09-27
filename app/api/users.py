@@ -50,26 +50,25 @@ router = APIRouter()
 #                         content=json_compatible_item_data)
 
 
-@router.get("/all", responses=response_schemas.all_users_responses)
-@manage_role_access(UserRoleEnum.MANAGER)
-def get_all_user(db: Session = Depends(deps.get_db),
-                 user: User = Depends(get_user)) -> JSONResponse:
-    db_users = crud_users.get_all_user(db=db)
-    if db_users is None:
-        return JSONResponse(status_code=500,
-                            content={"message": "Пользователи не найдены"})
-    json_compatible_item_data = jsonable_encoder(db_users)
-    return JSONResponse(status_code=200,
-                        content=json_compatible_item_data)
+# @router.get("/all", responses=response_schemas.all_users_responses)
+# @manage_role_access(UserRoleEnum.MANAGER)
+# def get_all_user(db: Session = Depends(deps.get_db),
+#                  user: User = Depends(get_user)) -> JSONResponse:
+#     db_users = crud_users.get_all_user(db=db)
+#     if db_users is None:
+#         return JSONResponse(status_code=500,
+#                             content={"message": "Пользователи не найдены"})
+#     json_compatible_item_data = jsonable_encoder(db_users)
+#     return JSONResponse(status_code=200,
+#                         content=json_compatible_item_data)
 
 
 @router.put("/", responses=response_schemas.single_users_responses)
 @manage_role_access(UserRoleEnum.MANAGER)
-def update_user(user_id: int,
-                data: UserUpdate,
+def update_user(data: UserUpdate,
                 db: Session = Depends(deps.get_db),
                 user: User = Depends(get_user)) -> JSONResponse:
-    data = crud_users.update_user(user_id=user_id, data=data, db=db)
+    data = crud_users.update_user(user, update=data, db=db)
     if data is None:
         return JSONResponse(status_code=500,
                             content={"message": "Internal Server Error"})
@@ -80,10 +79,9 @@ def update_user(user_id: int,
 
 @router.delete("/", responses=response_schemas.general_responses)
 @manage_role_access(UserRoleEnum.MANAGER)
-def delete_user(user_id: int,
-                db: Session = Depends(deps.get_db),
+def delete_user(db: Session = Depends(deps.get_db),
                 user: User = Depends(get_user)) -> JSONResponse:
-    data = crud_users.delete_user(user_id=user_id, db=db)
+    data = crud_users.delete_user(user, db=db)
     if data is None:
         return JSONResponse(status_code=500,
                             content={"message": "Internal Server Error"})
@@ -104,10 +102,9 @@ def delete_user(user_id: int,
 
 @router.get("/accept-terms", responses=response_schemas.general_responses)
 @manage_role_access(UserRoleEnum.USER)
-def accept_terms_user(user_id: int,
-                      db: Session = Depends(deps.get_db),
+def accept_terms_user(db: Session = Depends(deps.get_db),
                       user: User = Depends(get_user)) -> JSONResponse:
-    data = crud_users.user_accept_terms(user_id=user_id, db=db)
+    data = crud_users.user_accept_terms(user, db=db)
     if data is None:
         return JSONResponse(status_code=500,
                             content={"message": "Internal Server Error"})
