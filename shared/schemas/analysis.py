@@ -80,5 +80,5 @@ class AnalysisType(StrEnum):
     sentiment_region_commentators = "sentiment_region_commentators"
     similarity_reputation_reviewers = "similarity_reputation_reviewers"
     similarity_reputation_commentators = "similarity_reputation_commentators"
-    similarity_category_reviewers = "similarity_reputation_reviewers"
-    similarity_category_commentators = "similarity_reputation_commentators"
+    similarity_category_reviewers = "similarity_category_reviewers"
+    similarity_category_commentators = "similarity_category_commentators"

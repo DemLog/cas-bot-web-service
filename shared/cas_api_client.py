@@ -18,6 +18,7 @@ from shared.schemas.analysis import (
     SimilarityAnalysisType
 )
 from shared.schemas.base import TunedModel
+from shared.schemas.product import FoundProduct
 from shared.schemas.task import CasTask, CasPipeline
 from shared.schemas.visualizer import AnalysisVisualizationType, VisualizationType
 
@@ -113,12 +114,19 @@ class CasApiClient:
                 return None
         raise Exception
 
-    async def run_pipeline_analysis(self, product_name_id: str, analysis_vis_type: AnalysisVisualizationType) -> CasPipeline:
-        response: Response = await self._get(path=f"pipeline/shaper/comprehensive_analysis?"
-                                                  f"product_name_id={product_name_id}&"
-                                                  f"analysis_vis_type={analysis_vis_type.value}")
+    async def get_product_info(self, product_name_id: str) -> Optional[FoundProduct]:
+        response: ClientResponse = await self._get(path=f"product/info?product_name_id={product_name_id}")
         if response.status == 200:
-            return CasPipeline.model_validate_json(response.body.decode(encoding="utf-8"))
+            return FoundProduct.model_validate_json(await response.content.read())
+        else:
+            return None
+
+    async def run_pipeline_analysis(self, product_name_id: str, analysis_vis_type: AnalysisVisualizationType) -> CasPipeline:
+        response: ClientResponse = await self._get(path=f"pipeline/shaper/comprehensive_analysis?"
+                                                   f"product_name_id={product_name_id}&"
+                                                   f"analysis_vis_type={analysis_vis_type.value}")
+        if response.status == 200:
+            return CasPipeline.model_validate_json((await response.content.read()).decode(encoding="utf-8"))
         else:
             raise Exception
 

@@ -16,34 +16,31 @@ class CRUDAnalysisReport:
             return None
 
     def create_report(self,
-                      pipeline_id: str,
+                      *,
                       owner_id: str,
                       access_type: AccessType,
                       product_name_id: str,
                       product_image_url: str,
                       title_report: str,
                       db: Session):
-        report = self.get_report(pipeline_id, db)
-        if report is not None:
-            raise CasWebError(message="Such a report already exists", http_status_code=status.CONFLICT)
-        else:
-            try:
-                report = AnalysisReport(
-                    id=pipeline_id,
-                    owner_id=owner_id,
-                    access_type=access_type,
-                    product_name_id=product_name_id,
-                    product_image_url=product_image_url,
-                    title=title_report
-                )
-                db.add(report)
-                db.commit()
-                db.refresh(report)
-                return report
-            except SQLAlchemyError as e:
-                return None
+        try:
+            report = AnalysisReport(owner_id=owner_id,
+                                    access_type=access_type,
+                                    product_name_id=product_name_id,
+                                    product_image_url=product_image_url,
+                                    title=title_report)
+            db.add(report)
+            db.commit()
+            db.refresh(report)
+            return report
+        except SQLAlchemyError as e:
+            return None
 
-    def update_analysis_data_report(self, report_id: str, analysis_type: AnalysisType, json: str, db: Session):
+    def update_analysis_data_report(self,
+                                    report_id: str,
+                                    *,
+                                    analysis_type: AnalysisType,
+                                    json: str, db: Session):
         report: AnalysisReport = self.get_report(report_id, db)
         if report is None or not report.is_exist:
             raise CasWebError(message="The report doesn't exist", http_status_code=status.HTTP_404_NOT_FOUND)
@@ -78,3 +75,6 @@ class CRUDAnalysisReport:
                     return report
                 except SQLAlchemyError as e:
                     return None
+
+
+crud_analysis_report = CRUDAnalysisReport()

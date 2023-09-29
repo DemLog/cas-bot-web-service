@@ -1,3 +1,4 @@
+from enum import StrEnum
 from typing import Optional
 
 from pydantic import UUID4
@@ -24,3 +25,8 @@ class CasPipelineComponent(TunedModel):
 class CasPipeline(TunedModel):
     pipeline_id: UUID4
     pipeline_status: str
+
+
+class ResultType(StrEnum):
+    text = "text"
+    bytes = "bytes"
