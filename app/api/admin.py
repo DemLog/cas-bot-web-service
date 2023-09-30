@@ -3,15 +3,19 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
+from app.api.auth import manage_role_access
 from app.core import deps
+from app.core.deps import get_user
 from app.crud import crud_admin, crud_users
+from app.database.models.user import User, UserRoleEnum
 
 router = APIRouter()
 
 
 @router.get("/stats")
+@manage_role_access(UserRoleEnum.MANAGER)
 def get_new_users_stats(db: Session = Depends(deps.get_db),
-                        ) -> JSONResponse:
+                        user: User = Depends(get_user)) -> JSONResponse:
     data = crud_admin.get_all_new_users(db)
     if data is None:
         return JSONResponse(status_code=500,
@@ -23,8 +27,9 @@ def get_new_users_stats(db: Session = Depends(deps.get_db),
 
 
 @router.get("/activity/all")
+@manage_role_access(UserRoleEnum.MANAGER)
 def get_all_users_activity(db: Session = Depends(deps.get_db),
-                           ) -> JSONResponse:
+                           user: User = Depends(get_user)) -> JSONResponse:
     data = crud_admin.get_all_activity(db)
     if data is None:
         return JSONResponse(status_code=500,
@@ -35,8 +40,10 @@ def get_all_users_activity(db: Session = Depends(deps.get_db),
 
 
 @router.get("/activity")
-def get_user_activity(user_id: int, db: Session = Depends(deps.get_db),
-                      ) -> JSONResponse:
+@manage_role_access(UserRoleEnum.MANAGER)
+def get_user_activity(user_id: int,
+                      db: Session = Depends(deps.get_db),
+                      user: User = Depends(get_user)) -> JSONResponse:
     if user_id is None:
         return JSONResponse(status_code=422,
                             content={"message": "Не указан user_id"})
@@ -50,8 +57,10 @@ def get_user_activity(user_id: int, db: Session = Depends(deps.get_db),
 
 
 @router.post("/ban")
-def ban_user(user_id: int, db: Session = Depends(deps.get_db),
-             ) -> JSONResponse:
+@manage_role_access(UserRoleEnum.MANAGER)
+def ban_user(user_id: int,
+             db: Session = Depends(deps.get_db),
+             user: User = Depends(get_user)) -> JSONResponse:
     if user_id is None:
         return JSONResponse(status_code=422,
                             content={"message": "Не указан user_id"})
@@ -64,8 +73,11 @@ def ban_user(user_id: int, db: Session = Depends(deps.get_db),
 
 
 @router.post("/token")
-def add_user_token(user_id: int, tokens: int, db: Session = Depends(deps.get_db),
-                   ) -> JSONResponse:
+@manage_role_access(UserRoleEnum.MANAGER)
+def add_user_token(user_id: int,
+                   tokens: int,
+                   db: Session = Depends(deps.get_db),
+                   user: User = Depends(get_user)) -> JSONResponse:
     if user_id is None:
         return JSONResponse(status_code=422,
                             content={"message": "Не указан user_id"})
@@ -78,8 +90,11 @@ def add_user_token(user_id: int, tokens: int, db: Session = Depends(deps.get_db)
 
 
 @router.post("/role")
-def change_user_role(user_id: int, role: str, db: Session = Depends(deps.get_db),
-                     ) -> JSONResponse:
+@manage_role_access(UserRoleEnum.ADMIN)
+def change_user_role(user_id: int,
+                     role: str,
+                     db: Session = Depends(deps.get_db),
+                     user: User = Depends(get_user)) -> JSONResponse:
     if user_id is None:
         return JSONResponse(status_code=422,
                             content={"message": "Не указан user_id"})
