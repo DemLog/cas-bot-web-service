@@ -13,7 +13,7 @@ from starlette import status
 from app.api.exceptions import CasWebError
 from app.core.config import ProjectSettings
 from app.core.deps import get_db, create_access_token, get_key
-from app.core.schemas import UserCreate
+from app.core.schemas import UserCreate, UserAuth, UserData
 from app.core.schemas.security import TelegramLoginData
 from app.crud import crud_users
 from app.database.models.user import UserRoleEnum, User
@@ -22,7 +22,7 @@ router = APIRouter()
 
 
 @router.get("/login")
-def signin(return_to: str, response: Response, data: TelegramLoginData = Depends(), db: Session = Depends(get_db)):
+def signin(data: TelegramLoginData = Depends(), db: Session = Depends(get_db)):
     """Route for obtaining a JWT token"""
     is_valid: bool = validate(data, ProjectSettings.BOT_TOKEN)
     if is_valid:
@@ -34,8 +34,19 @@ def signin(return_to: str, response: Response, data: TelegramLoginData = Depends
                                                      first_name=data.first_name,
                                                      last_name=data.last_name,
                                                      username=data.username), db)
-        response.set_cookie(key="api-token", value=create_access_token({"user_id": user.id}))
-        return RedirectResponse(url=return_to, status_code=303)
+        return UserAuth(
+            user_data=UserData(
+                id=user.id,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                username=user.username,
+                role=user.role,
+                tokens=user.tokens,
+                is_active=user.is_active,
+                is_accept_terms=user.is_accept_terms
+            ),
+            token=create_access_token({"user_id": user.id})
+        )
     else:
         raise CasWebError(message="TelegramLoginData no valid", http_status_code=status.HTTP_401_UNAUTHORIZED)
 
@@ -78,7 +89,8 @@ def validate(data: TelegramLoginData, bot_token: str) -> bool:
     ).hexdigest()
 
     return data.hash == calculated_hash and \
-        datetime.fromtimestamp(data.auth_date) + timedelta(minutes=ProjectSettings.TELEGRAM_DATA_EXPIRE_MINUTES) >= datetime.now()
+        datetime.fromtimestamp(data.auth_date) + timedelta(
+            minutes=ProjectSettings.TELEGRAM_DATA_EXPIRE_MINUTES) >= datetime.now()
 
 
 def manage_role_access(access_level: UserRoleEnum):
@@ -113,6 +125,7 @@ def manage_tokens_access(cost_tokens: int):
     :param cost_tokens:
     :return:
     """
+
     def decorator(f):
         @wraps(f)
         async def wrapped_f(*args, **kwargs):

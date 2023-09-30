@@ -30,3 +30,19 @@ class UserInfo(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     role: Optional[str] = UserRoleEnum.USER
+
+
+class UserData(BaseModel):
+    id: Optional[int]
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    role: Optional[str] = UserRoleEnum.USER
+    tokens: Optional[int] = None
+    is_active: Optional[bool] = True
+    is_accept_terms: Optional[bool] = False
+
+
+class UserAuth(BaseModel):
+    user_data: UserData
+    token: Optional[str] = None
