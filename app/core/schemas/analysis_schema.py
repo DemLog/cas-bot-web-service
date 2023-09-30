@@ -37,7 +37,7 @@ class AnalysisReport(BaseModel):
 
 class ReportJsonData(BaseModel):
     analysis_type: AnalysisType
-    json: Optional[str]
+    json_data: Optional[str]
 
 
 class AnalysisReportData(AnalysisReport):
