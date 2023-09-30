@@ -1,11 +1,12 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, HttpUrl
 
 from app.core.schemas import UserInfo
 from app.database.models.analysis_report import AccessType
+from shared.schemas.analysis import AnalysisType
 
 
 class ProductSearch(BaseModel):
@@ -32,3 +33,12 @@ class AnalysisReport(BaseModel):
     access_type: AccessType
     product: ProductInfo
     formation_date: datetime
+
+
+class ReportJsonData(BaseModel):
+    analysis_type: AnalysisType
+    json: Optional[str]
+
+
+class AnalysisReportData(AnalysisReport):
+    data: list[ReportJsonData]
