@@ -4,6 +4,7 @@ from starlette import status
 
 from app.api.exceptions import CasWebError
 from app.database.models.analysis_report import AnalysisReport, AccessType
+from app.database.models.user import User
 from shared.schemas.analysis import AnalysisType
 
 
@@ -11,6 +12,13 @@ class CRUDAnalysisReport:
     def get_report(self, report_id: str, db: Session):
         try:
             data = db.query(AnalysisReport).filter(AnalysisReport.id == report_id).first()
+            return data
+        except SQLAlchemyError as e:
+            return None
+
+    def get_reports_for_user(self, user: User, db: Session) -> list[AnalysisReport]:
+        try:
+            data = db.query(AnalysisReport).filter(AnalysisReport.owner_id == user.id).all()
             return data
         except SQLAlchemyError as e:
             return None

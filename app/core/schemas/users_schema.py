@@ -17,10 +17,16 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(BaseModel):
-    first_name: Optional[str | None] = None
-    last_name: Optional[str | None] = None
-    username: Optional[str | None] = None
-    role: Optional[str | None] = UserRoleEnum.USER
-    tokens: Optional[int | None] = None
-    is_active: Optional[bool | None] = True
-    is_accept_terms: Optional[bool | None] = True
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    role: Optional[str] = UserRoleEnum.USER
+    tokens: Optional[int] = None
+    is_active: Optional[bool] = True
+    is_accept_terms: Optional[bool] = True
+
+
+class UserInfo(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    role: Optional[str] = UserRoleEnum.USER

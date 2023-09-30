@@ -59,7 +59,7 @@ async def cas_exception_handler(connection: Request | WebSocket, exc: CasWebErro
         await connection.close(reason=exc.message)
     else:
         return JSONResponse(
-            status_code=exc.http_status_code.value,
+            status_code=int(exc.http_status_code),
             content={"message": exc.message}
         )
 

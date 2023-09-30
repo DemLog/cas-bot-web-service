@@ -132,3 +132,7 @@ def manage_tokens_access(cost_tokens: int):
             else:
                 raise CasWebError(message=error_message,
                                   http_status_code=status.HTTP_403_FORBIDDEN)
+
+        return wrapped_f
+
+    return decorator

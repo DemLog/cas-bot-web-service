@@ -1,5 +1,36 @@
 components:
   schemas:
+    AccessType:
+      enum:
+      - public
+      - bot_users
+      - private
+      title: AccessType
+      type: string
+    AnalysisReport:
+      properties:
+        access_type:
+          $ref: '#/components/schemas/AccessType'
+        formation_date:
+          format: date-time
+          title: Formation Date
+          type: string
+        id:
+          format: uuid
+          title: Id
+          type: string
+        owner:
+          $ref: '#/components/schemas/UserInfo'
+        product:
+          $ref: '#/components/schemas/ProductInfo'
+      required:
+      - id
+      - owner
+      - access_type
+      - product
+      - formation_date
+      title: AnalysisReport
+      type: object
     HTTPValidationError:
       properties:
         detail:
@@ -21,6 +52,46 @@ components:
       - title
       - url
       title: HistoryCreate
+      type: object
+    ProductInfo:
+      properties:
+        product_image_url:
+          format: uri
+          maxLength: 2083
+          minLength: 1
+          title: Product Image Url
+          type: string
+        product_name_id:
+          title: Product Name Id
+          type: string
+        title:
+          title: Title
+          type: string
+      required:
+      - product_name_id
+      - product_image_url
+      - title
+      title: ProductInfo
+      type: object
+    UserInfo:
+      properties:
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        role:
+          anyOf:
+          - type: string
+          - type: 'null'
+          default: user
+          title: Role
+      title: UserInfo
       type: object
     UserUpdate:
       properties:
@@ -263,6 +334,57 @@ paths:
       summary: Add User Token
       tags:
       - Admins
+  /api/v1/analysis_report/info/{report_id}:
+    get:
+      operationId: get_info_report_api_v1_analysis_report_info__report_id__get
+      parameters:
+      - in: path
+        name: report_id
+        required: true
+        schema:
+          format: uuid
+          title: Report Id
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisReport'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+      - Cas Web Service API Key: []
+      - Active telegram user ID: []
+      - Cas Web JWT Token: []
+      summary: Get Info Report
+      tags:
+      - Report
+  /api/v1/analysis_report/list:
+    get:
+      operationId: get_list_reports_api_v1_analysis_report_list_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AnalysisReport'
+                title: Response Get List Reports Api V1 Analysis Report List Get
+                type: array
+          description: Successful Response
+      security:
+      - Cas Web Service API Key: []
+      - Active telegram user ID: []
+      - Cas Web JWT Token: []
+      summary: Get List Reports
+      tags:
+      - Report
   /api/v1/bookmarks/:
     get:
       operationId: get_bookmark_api_v1_bookmarks__get
