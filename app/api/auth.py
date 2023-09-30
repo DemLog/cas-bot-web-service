@@ -78,7 +78,7 @@ def validate(data: TelegramLoginData, bot_token: str) -> bool:
     ).hexdigest()
 
     return data.hash == calculated_hash and \
-        datetime.fromtimestamp(data.auth_date) + timedelta(minutes=ProjectSettings.TELEGRAM_DATA_EXPIRE_MINUTES) <= datetime.utcnow()
+        datetime.fromtimestamp(data.auth_date) + timedelta(minutes=ProjectSettings.TELEGRAM_DATA_EXPIRE_MINUTES) >= datetime.now()
 
 
 def manage_role_access(access_level: UserRoleEnum):
