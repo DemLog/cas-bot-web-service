@@ -81,7 +81,7 @@ def add_user_token(user_id: int,
     if user_id is None:
         return JSONResponse(status_code=422,
                             content={"message": "Не указан user_id"})
-    data = crud_users.user_add_tokens(user_id, tokens, db)
+    data = crud_users.user_by_id_add_tokens(user_id, tokens, db)
     if data is None:
         return JSONResponse(status_code=500,
                             content={"message": "Internal Server Error"})

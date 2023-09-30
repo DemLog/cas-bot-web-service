@@ -85,13 +85,25 @@ class CRUDUsers:
         except SQLAlchemyError as e:
             return None
 
-    def user_add_tokens(self, user_id, tokens: int, db: Session) -> Any:
+    def user_by_id_add_tokens(self, user_id, tokens: int, db: Session) -> Any:
+        db_user = self.get_user_by_id(user_id, db)
+        self.user_add_tokens(db_user, tokens, db)
+
+    def user_add_tokens(self, user: User, tokens: int, db: Session):
         try:
-            db_user = db.query(User).filter(User.id == user_id).first()
-            db_user.tokens += tokens
+            user.tokens += tokens
             db.commit()
-            db.refresh(db_user)
-            return db_user
+            db.refresh(user)
+            return user
+        except SQLAlchemyError as e:
+            return None
+
+    def user_subtract_tokens(self, user: User, tokens: int, db: Session):
+        try:
+            user.tokens -= tokens
+            db.commit()
+            db.refresh(user)
+            return user
         except SQLAlchemyError as e:
             return None
 
@@ -127,7 +139,7 @@ class CRUDUsers:
         except SQLAlchemyError as e:
             return None
 
-    def get_user_id(self, user_id: int, db: Session) -> Any:
+    def get_user_by_id(self, user_id: int, db: Session) -> User:
         try:
             data = db.query(User).filter(User.id == user_id).first()
             return data

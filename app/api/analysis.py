@@ -6,7 +6,7 @@ from pydantic import UUID4, TypeAdapter
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
-from app.api.auth import manage_role_access
+from app.api.auth import manage_role_access, manage_tokens_access
 from app.api.exceptions import CasWebError
 from app.core.deps import get_user, get_cas_api_client, get_db
 from app.crud import crud_analysis_report
@@ -28,6 +28,7 @@ router = APIRouter()
 
 @router.websocket("/search")
 @manage_role_access(UserRoleEnum.USER)
+@manage_tokens_access(5)
 async def search_product(websocket: WebSocket,
                          search_input: str = "ЧелГу",
                          cas_api_client: CasApiClient = Depends(get_cas_api_client),
@@ -75,6 +76,7 @@ async def task_result(websocket: WebSocket,
 
 @router.websocket("/pipeline_analysis")
 @manage_role_access(UserRoleEnum.USER)
+@manage_tokens_access(30)
 async def start_pipeline_analysis(websocket: WebSocket,
                                   product_name_id: str,
                                   access_type: AccessType = AccessType.BOT_USERS,
@@ -105,6 +107,7 @@ async def start_pipeline_analysis(websocket: WebSocket,
 
 @router.websocket("/save_report")
 @manage_role_access(UserRoleEnum.USER)
+@manage_tokens_access(30)
 async def save_report(websocket: WebSocket,
                       pipeline_id: UUID4,
                       report_id: UUID4,

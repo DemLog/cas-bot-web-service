@@ -26,7 +26,7 @@ def signin(return_to: str, response: Response, data: TelegramLoginData = Depends
     """Route for obtaining a JWT token"""
     is_valid: bool = validate(data, ProjectSettings.BOT_TOKEN)
     if is_valid:
-        user = crud_users.get_user_id(data.id, db)
+        user = crud_users.get_user_by_id(data.id, db)
         if user is not None:
             pass
         else:
@@ -50,7 +50,7 @@ def signup(return_to: str,
     Route for user registration in the system via telegram bot.
     The user will be automatically added to the system via the Web when logging in via telegram.
     """
-    user = crud_users.get_user_id(user.id, db)
+    user = crud_users.get_user_by_id(user.id, db)
     if user is not None:
         raise CasWebError(message="User already exists", http_status_code=status.HTTP_409_CONFLICT)
     else:
@@ -103,3 +103,32 @@ def manage_role_access(access_level: UserRoleEnum):
         return wrapped_f
 
     return decorator
+
+
+def manage_tokens_access(cost_tokens: int):
+    """
+    Performs token charging from regular users
+    (managers and administrators are not subject to the restriction)
+
+    :param cost_tokens:
+    :return:
+    """
+    def decorator(f):
+        @wraps(f)
+        async def wrapped_f(*args, **kwargs):
+            user: Optional[User] = kwargs.get("user")
+            error_message: str = "Not enough tokens to perform the operation"
+            if user is not None:
+                if user.tokens < cost_tokens and user.role == UserRoleEnum.USER:
+                    raise CasWebError(message=error_message,
+                                      http_status_code=status.HTTP_403_FORBIDDEN)
+                else:
+                    if iscoroutinefunction(f):
+                        result = await f(*args, **kwargs)
+                    else:
+                        result = f(*args, **kwargs)
+                    crud_users.user_subtract_tokens(user, cost_tokens, kwargs["db"])
+                    return result
+            else:
+                raise CasWebError(message=error_message,
+                                  http_status_code=status.HTTP_403_FORBIDDEN)

@@ -19,7 +19,7 @@ router = APIRouter()
 # def register_user(user: UserCreate,
 #                   db: Session = Depends(deps.get_db)
 #                   ) -> JSONResponse:
-#     data = crud_users.get_user_id(user_id=user.id, db=db)
+#     data = crud_users.get_user_by_id(user_id=user.id, db=db)
 #     if data is not None:
 #         return JSONResponse(status_code=400,
 #                             content={"message": "Пользователь уже есть в базе"})
@@ -41,7 +41,7 @@ router = APIRouter()
 #     if user_id is None:
 #         return JSONResponse(status_code=422,
 #                             content={"message": "Не указан user_id"})
-#     db_user = crud_users.get_user_id(user_id=user_id, db=db)
+#     db_user = crud_users.get_user_by_id(user_id=user_id, db=db)
 #     if db_user is None:
 #         return JSONResponse(status_code=404,
 #                             content={"message": "Пользователь не найден"})

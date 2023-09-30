@@ -46,7 +46,7 @@ async def get_user(key: str = Security(api_key_header),
                    db: Session = Depends(get_db)):
     """Dependency for access verification by api key or telegram data"""
     if key == ProjectSettings.WEB_SERVICE_API_KEY:
-        user: User = crud_users.get_user_id(user_id, db)
+        user: User = crud_users.get_user_by_id(user_id, db)
         if user is not None:
             return user
         else:
@@ -62,7 +62,7 @@ async def get_user(key: str = Security(api_key_header),
             else:
                 user_id = payload.get("user_id")
                 if user_id is not None:
-                    user: User = crud_users.get_user_id(user_id, db)
+                    user: User = crud_users.get_user_by_id(user_id, db)
                     if user is not None:
                         return user
                     else:
