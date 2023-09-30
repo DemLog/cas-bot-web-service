@@ -1,7 +1,9 @@
 from http import HTTPStatus
 
 import uvicorn
+import yaml
 from fastapi import FastAPI, Request, WebSocket
+from fastapi.openapi.utils import get_openapi
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
@@ -29,6 +31,14 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix=ProjectSettings.API_VERSION_PATH)
+
+
+@app.get(f"/swagger.yaml", include_in_schema=False)
+async def get_swagger():
+    openapi_schema = get_openapi(title=f"{ProjectSettings.PROJECT_NAME} API", version="0.1.0", routes=app.routes)
+    with open("./docs/swagger.yaml", "w") as file:
+        yaml.dump(openapi_schema, file)
+    return openapi_schema
 
 
 @app.on_event("startup")
