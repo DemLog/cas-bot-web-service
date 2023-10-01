@@ -35,7 +35,11 @@ router = APIRouter()
 
 
 @router.get("/", responses=response_schemas.single_users_responses)
-def get_user_me(user: User = Depends(get_user)) -> JSONResponse:
+@manage_role_access(UserRoleEnum.USER)
+def get_user(user_id: int = 0, db: Session = Depends(deps.get_db), user_me: User = Depends(get_user)) -> JSONResponse:
+    user: User = user_me
+    if user_id != 0:
+        user = crud_users.get_user_by_id(user_id, db)
     if user is None:
         return JSONResponse(status_code=500,
                             content={"message": "Internal Server Error"})
@@ -116,13 +120,13 @@ def accept_terms_user(db: Session = Depends(deps.get_db),
                         content={"message": "success"})
 
 
-@router.get("/", responses=response_schemas.single_users_responses)
+@router.get("/search", responses=response_schemas.single_users_responses)
 @manage_role_access(UserRoleEnum.MANAGER)
-def get_user_id(user_id: int, db: Session = Depends(deps.get_db)) -> JSONResponse:
-    user = crud_users.get_user_by_id(user_id, db)
-    if user is None:
+def search_user(q: str, db: Session = Depends(deps.get_db)) -> JSONResponse:
+    users = crud_users.search_users_by_query(q, db)
+    if users is None:
         return JSONResponse(status_code=500,
                             content={"message": "Internal Server Error"})
-    json_compatible_item_data = jsonable_encoder(user)
+    json_compatible_item_data = jsonable_encoder(users)
     return JSONResponse(status_code=200,
                         content=json_compatible_item_data)

@@ -153,5 +153,12 @@ class CRUDUsers:
         except SQLAlchemyError as e:
             return None
 
+    def search_users_by_query(self, q: str, db: Session) -> [User]:
+        try:
+            data = db.query(User).filter((str(User.id).startswith(q)) | (User.username.startswith(q))).all()
+            return data
+        except SQLAlchemyError as e:
+            return None
+
 
 crud_users = CRUDUsers()
