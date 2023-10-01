@@ -33,13 +33,16 @@ def signin(data: TelegramLoginData = Depends(), db: Session = Depends(get_db)):
             user = crud_users.create_user(UserCreate(id=data.id,
                                                      first_name=data.first_name,
                                                      last_name=data.last_name,
-                                                     username=data.username), db)
+                                                     username=data.username,
+                                                     photo_url=data.photo_url
+                                                     ), db)
         return UserAuth(
             user_data=UserData(
                 id=user.id,
                 first_name=user.first_name,
                 last_name=user.last_name,
                 username=user.username,
+                photo_url=user.photo_url,
                 role=user.role,
                 tokens=user.tokens,
                 is_active=user.is_active,

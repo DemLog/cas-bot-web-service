@@ -31,6 +31,8 @@ class User(Base):
     role = Column(String, nullable=False, default=UserRoleEnum.USER)
     tokens = Column(Integer, nullable=False, default=10)
 
+    photo_url = Column(String, nullable=False, default="")
+
     is_active = Column(Boolean, nullable=False, default=True)
     is_accept_terms = Column(Boolean, nullable=False, default=False)
 

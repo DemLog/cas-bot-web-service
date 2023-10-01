@@ -56,8 +56,8 @@ async def get_user(key: str = Security(api_key_header),
         exp = payload.get("exp")
         if exp is not None:
             exp = datetime.fromtimestamp(float(exp))
-            now = datetime.utcnow()
-            if exp > now:
+            now = datetime.now()
+            if exp < now:
                 raise CasWebError(message="The access token was expired", http_status_code=status.HTTP_401_UNAUTHORIZED)
             else:
                 user_id = payload.get("user_id")

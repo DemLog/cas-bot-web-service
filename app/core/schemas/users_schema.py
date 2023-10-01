@@ -13,6 +13,7 @@ class UserCreate(UserBase):
     first_name: str
     last_name: Optional[str] = None
     username: Optional[str] = None
+    photo_url: Optional[str] = None
     is_accept_terms: bool = False
 
 
@@ -20,6 +21,7 @@ class UserUpdate(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     username: Optional[str] = None
+    photo_url: Optional[str] = None
     role: Optional[str] = UserRoleEnum.USER
     tokens: Optional[int] = None
     is_active: Optional[bool] = True
@@ -37,6 +39,7 @@ class UserData(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     username: Optional[str] = None
+    photo_url: Optional[str] = None
     role: Optional[str] = UserRoleEnum.USER
     tokens: Optional[int] = None
     is_active: Optional[bool] = True

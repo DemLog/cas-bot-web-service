@@ -34,20 +34,14 @@ router = APIRouter()
 #                         content={"message": "success"})
 
 
-# @router.get("/", responses=response_schemas.single_users_responses)
-# def get_user(user_id: int,
-#              db: Session = Depends(deps.get_db),
-#              ) -> JSONResponse:
-#     if user_id is None:
-#         return JSONResponse(status_code=422,
-#                             content={"message": "Не указан user_id"})
-#     db_user = crud_users.get_user_by_id(user_id=user_id, db=db)
-#     if db_user is None:
-#         return JSONResponse(status_code=404,
-#                             content={"message": "Пользователь не найден"})
-#     json_compatible_item_data = jsonable_encoder(db_user)
-#     return JSONResponse(status_code=200,
-#                         content=json_compatible_item_data)
+@router.get("/", responses=response_schemas.single_users_responses)
+def get_user(user: User = Depends(get_user)) -> JSONResponse:
+    if user is None:
+        return JSONResponse(status_code=500,
+                            content={"message": "Internal Server Error"})
+    json_compatible_item_data = jsonable_encoder(user)
+    return JSONResponse(status_code=200,
+                        content=json_compatible_item_data)
 
 
 # @router.get("/all", responses=response_schemas.all_users_responses)
