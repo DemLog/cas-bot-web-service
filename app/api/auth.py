@@ -25,6 +25,7 @@ router = APIRouter()
 def signin(data: TelegramLoginData = Depends(), db: Session = Depends(get_db)):
     """Route for obtaining a JWT token"""
     is_valid: bool = validate(data, ProjectSettings.BOT_TOKEN)
+    print(data)
     if is_valid:
         user = crud_users.get_user_by_id(data.id, db)
         if user is not None:

